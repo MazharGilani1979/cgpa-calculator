@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CGPA Calculator (Based on Grade Points)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background-color: #f5f5f5;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background-color: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #eee;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+    }
+    #result {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>CGPA Calculator (Based on Grade Points)</h2>
+  <table id="gradesTable">
+    <thead>
+      <tr>
+        <th>Course</th>
+        <th>Credit Hours</th>
+        <th>Grade Point</th>
+        <th>Weighted Points (Cr Hr × GP)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Course 1</td>
+        <td><input type="number" min="1" value="3" oninput="updateWeightedPoints(this)" /></td>
+        <td>
+          <select onchange="updateWeightedPoints(this)">
+            <option value="4.00">4.00</option>
+            <option value="3.66">3.66</option>
+            <option value="3.33">3.33</option>
+            <option value="3.00">3.00</option>
+            <option value="2.66">2.66</option>
+            <option value="2.33">2.33</option>
+            <option value="2.00">2.00</option>
+            <option value="1.66">1.66</option>
+            <option value="1.30">1.30</option>
+            <option value="1.00">1.00</option>
+            <option value="0.00">0.00</option>
+          </select>
+        </td>
+        <td class="weighted">12.00</td>
+      </tr>
+    </tbody>
+  </table>
+  <button onclick="addRow()">Add Course</button>
+  <button onclick="calculateCGPA()">Calculate CGPA</button>
+  <p id="result"></p>
+
+  <script>
+    function addRow() {
+      const table = document.getElementById("gradesTable").getElementsByTagName("tbody")[0];
+      const rowCount = table.rows.length + 1;
+      const row = table.insertRow();
+      row.innerHTML = `
+        <td>Course ${rowCount}</td>
+        <td><input type="number" min="1" value="3" oninput="updateWeightedPoints(this)" /></td>
+        <td>
+          <select onchange="updateWeightedPoints(this)">
+            <option value="4.00">4.00</option>
+            <option value="3.66">3.66</option>
+            <option value="3.33">3.33</option>
+            <option value="3.00">3.00</option>
+            <option value="2.66">2.66</option>
+            <option value="2.33">2.33</option>
+            <option value="2.00">2.00</option>
+            <option value="1.66">1.66</option>
+            <option value="1.30">1.30</option>
+            <option value="1.00">1.00</option>
+            <option value="0.00">0.00</option>
+          </select>
+        </td>
+        <td class="weighted">12.00</td>
+      `;
+    }
+
+    function updateWeightedPoints(el) {
+      const row = el.closest("tr");
+      const credit = parseFloat(row.cells[1].querySelector("input").value);
+      const gradePoint = parseFloat(row.cells[2].querySelector("select").value);
+      const weighted = credit * gradePoint;
+      row.cells[3].textContent = weighted.toFixed(2);
+    }
+
+    function calculateCGPA() {
+      const rows = document.querySelectorAll("#gradesTable tbody tr");
+      let totalPoints = 0;
+      let totalCredits = 0;
+
+      rows.forEach(row => {
+        const credit = parseFloat(row.cells[1].querySelector("input").value);
+        const gradePoint = parseFloat(row.cells[2].querySelector("select").value);
+        totalPoints += credit * gradePoint;
+        totalCredits += credit;
+        row.cells[3].textContent = (credit * gradePoint).toFixed(2);
+      });
+
+      const cgpa = totalCredits ? (totalPoints / totalCredits).toFixed(2) : 0;
+      document.getElementById("result").innerHTML = `
+        Your CGPA is: <strong>${cgpa}</strong><br>
+        Total Credit Hours: <strong>${totalCredits}</strong><br>
+        Total Weighted Points: <strong>${totalPoints.toFixed(2)}</strong>
+      `;
+    }
+  </script>
+</body>
+</html>
